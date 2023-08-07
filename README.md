@@ -1,51 +1,63 @@
 ## a Libconfig Parser for js
 
-Implemented after the [Specs](https://hyperrealm.github.io/libconfig/libconfig_manual.html#Configuration-Files) and powered by [Sprache-js](https://github.com/luggage66/Sprache-js).
+A fork of the incredibly useful [Libconfig Parser](https://github.com/TitanRO/libconfig-parser-js) by TitanRO
 
-## Implementation Status
+## What is this?
 
-- [X] Parsing whole files
-    - [X] read files
-    - [X] Comments
-        - [X] ignore them
-        - [X] Script-style comments `# comment line`
-        - [X] C++-style comments `// comment line`
-        - [X] C-style comments `/* comment */`
-    - [X] Include Directives (maximum of 10 levels)
-- [X] Settings
-    - [X] Groups
-    - [X] Arrays
-    - [X] Lists
-    - [X] scalar value
-        - [X] Integer
-            - [X] hex notation
-            - [X] decimal notation
-            - [X] octal notation
-            - [X] signed Integers
-        - [X] 64-bit Integer (*ignores the 64bit part for now)
-        - [X] Float
-            - [X] Normal Floats
-            - [X] Signed Floats
-            - [X] Exponents
-        - [X] Boolean
-        - [X] Strings
-            - [X] Strings
-            - [X] Strings with escape sequences
-            - [X] Adjacent strings are automatically concatenated
-            - [X] Multiline string with `<"` and `">` (Is not in the specs but used in the libconfig file I want to parse)
+Parser and serializer for libconfig files of the [Hercules emulator](https://github.com/HerculesWS/Hercules).
 
-- [ ] serialization of js objects to libconfig files
+## API
+### parseFile (filepath, basedir)
+Parses the .conf file specified in `filepath`, constructing the JavaScript value or object described by the file. `basedir` must be the root folder of the project.
 
-## Stages/Steps/TODO:
+### writeFile (filepath, basedir, content [, options])
+Converts the javascript value of `content` into valid libconfig file and saves it in the specified `filepath` under `basedir`.
 
-- Writing code and tests for parsing ✔️
-- Optimizing code for parsing
-- Writing code and tests for serialization to libconfig files
-- Documentation and examples
+Options:
+- autodetect (true by default): Automatically detect the type of arrays in `content`. Set to false if the autodetection of Lists fails and you wish to manually distinguish between Lists and normal arrays.
+
+## Caveats
+When dealing with multiline scripts enclosed by `<"` and `">` this library uses the custom `Script` class, use it like a regular `String` primitive. Once serialized into a config file, `<"` and `">` are added automatically.
 
 
-## Quirks
+Update script of an item
+``` javascript
+myItem.Script = new Script(" bonus bDex,1; ")
+```
+Output:
+```
+{
+	...
+	Script: <"  bonus bDex,1; ">
+}
+```
 
-- You can do mixed number types (floats and its in same array) in Arrays which is not possible with normal libconfig
+Similarly, the `List` class is added for those arrays enclosed by `(` and `)`. Remember, the way libconfig works is:
+  - Array: Enclosed by `[` and `]`. Holds items of scalar values (primitives).
+  - List: Enclosed by `(` and `)`. Holds items of any value. This class is not mandatory if the autodetect option is set to true.
 
-- Multiline string with `<"` and `">` are not in the official specs, but **they are supported** by this module.
+Example creating a new list:
+``` javascript
+const myItemFile = {
+    item_db: new List( // Or List.from([...]) to convert from an existing array
+        {  
+            Id: 1,
+            Name: "Random Item",
+            Loc: [ "EQP_HEAD_TOP", "EQP_HEAD_MID" ]
+        }
+    )
+}
+```
+Output file:
+```
+item_db: (
+    {  
+        Id: 1
+        Name: "Random Item"
+        Loc: [
+            "EQP_HEAD_TOP",
+            "EQP_HEAD_MID"
+        ]
+    }
+)
+```
