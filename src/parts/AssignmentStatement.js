@@ -2,6 +2,7 @@ const { Identifier } = require("./Identifier")
 const { scalarValue, ArrayElements } = require("./scalarValue")
 const { Parse } = require('sprache')
 const { space } = require("./space");
+const { List } = require("./types");
 
 const AssignmentOperator = Parse.char(c => /:|=/.test(c), '=|: (assignment)')
 
@@ -9,7 +10,7 @@ const SettingValue = Parse.queryOr(function* () {
     yield scalarValue
     yield ArrayParser
     yield Group
-    yield List
+    yield ListParser
 })
 
 const Setting = Parse.query(function* () {
@@ -56,7 +57,7 @@ const ArrayParser = Parse.query(function* () {
     return Parse.return(values)
 })
 
-const List = Parse.query(function*(){
+const ListParser = Parse.query(function*(){
     yield space.many()
     yield Parse.char("(")
     yield space.many()
@@ -70,7 +71,7 @@ const List = Parse.query(function*(){
     yield Parse.char(")")
     yield space.many()
 
-    return Parse.return(values)
+    return Parse.return(List.from(values))
 })
 
 module.exports = {

@@ -1,6 +1,8 @@
-const { include, getFromFile } = require("./parts/include")
+const { include, getFromFile, setToFile } = require("./parts/include")
 const { Group } = require("./parts/AssignmentStatement")
 const { RemoveComments } = require("./parts/Comments")
+const { Stringify, stringify2 } = require("./writer/Stringify");
+const { Script, List } = require("./parts/types");
 
 /**
  * 
@@ -18,22 +20,34 @@ function stripComments(input) {
  * @returns {{[key:string]:any}}
  */
 function parseString(input){
+    input = stripComments(input);
     return Group.parse(`{${stripComments(input)}}`)
 }
 
+function fileReadFunction(filename, basedir) {
+    return stripComments(getFromFile(filename, basedir))
+}
 /**
  * 
- * @param {string} filename 
+ * @param {string} filepath File path starting from basedir
  * @param {string} basedir used for `@include`
- * @param {(path:string, basedir:string)=>string} fileReadFunction
  */
-function parseFile(filename, basedir, fileReadFunction=getFromFile){
-    const content = include(fileReadFunction(filename, basedir), basedir, fileReadFunction)
+function parseFile(filepath, basedir) {
+    const content = include(fileReadFunction(filepath, basedir), basedir, fileReadFunction)
     return parseString(content)
+}
+
+
+function writeFile(filename, basedir, content, options = {}) {
+    const body = Stringify(content, options.autodetect);
+    return setToFile(filename, basedir, body);
 }
 
 module.exports = {
     stripComments,
     parseString,
     parseFile,
+    writeFile,
+    Script,
+    List
 }

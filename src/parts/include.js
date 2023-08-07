@@ -1,5 +1,5 @@
 const { join } = require("path");
-const { readFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 /**
  * 
  * @param {string} path 
@@ -7,6 +7,10 @@ const { readFileSync } = require("fs");
  */
 function getFromFile(path, includedir) {    
     return readFileSync(join(includedir, path), "utf-8")
+}
+
+function setToFile(path, includedir, content) {
+    return writeFileSync(join(includedir, path), content);
 }
 
 /**
@@ -34,5 +38,6 @@ function include(string, includedir, getFunction) {
 
 module.exports = {
     include,
-    getFromFile
+    getFromFile,
+    setToFile
 }

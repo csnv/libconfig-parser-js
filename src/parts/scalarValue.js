@@ -1,5 +1,6 @@
 const { Parse } = require('sprache');
-const { space } = require("./space")
+const { space } = require("./space");
+const { Script } = require('./types');
 
 const Integer = Parse
     .digit.xAtLeastOnce().text()
@@ -65,7 +66,7 @@ const MaybeSignedNumber = Parse.queryOr(function* () {
 const NumberParser64bit = Parse.query(function* () {
     const number = yield MaybeSignedNumber;
     const last = yield Parse.char('L', "the Letter L for 64bit int").once();
-    return Parse.return(number);
+    return Parse.return(new BigInt(number));
 })
 
 const NumberParser = Parse.queryOr(function* () {
@@ -126,7 +127,7 @@ const MultilineStringParser = Parse.query(function* () {
     yield Parse.string("<\"")
     const content = yield Parse.regex(/((?!">)[^])+/)
     yield Parse.string("\">")
-    return Parse.return(content);
+    return Parse.return(new Script(content));
 })
 
 const BooleanParser = Parse
