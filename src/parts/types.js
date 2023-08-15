@@ -17,7 +17,7 @@ class Script extends String {
             .filter(str => !!str);
 
         if (contents.length === 1)
-            return "<\" " + contents[0] + " \">";
+            return "<\" " + this + " \">";
         else {
             let str = "<\"\n";
 
