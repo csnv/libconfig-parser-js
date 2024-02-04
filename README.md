@@ -6,6 +6,15 @@ A fork of the incredibly useful [Libconfig Parser](https://github.com/TitanRO/li
 
 Parser and serializer for libconfig files of the [Hercules emulator](https://github.com/HerculesWS/Hercules).
 
+## Installation
+
+Install libconfig-parser directly from NPM
+> npm install @csnvrag/libconfig-parser
+
+Or from Github
+
+> npm install https://github.com/csnv/libconfig-parser-js.git
+
 ## API
 ### parseFile (filepath, basedir)
 Parses the .conf file specified in `filepath`, constructing the JavaScript value or object described by the file. `basedir` must be the root folder of the project.

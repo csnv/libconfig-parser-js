@@ -1,5 +1,5 @@
 {
-  "name": "libconfig-parser",
+  "name": "@csnvrag/libconfig-parser",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",

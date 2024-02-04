@@ -1,4 +1,4 @@
-const { include, getFromFile, setToFile } = require("./parts/include")
+const { atInclude, getFromFile, setToFile } = require("./parts/include")
 const { Group } = require("./parts/AssignmentStatement")
 const { RemoveComments } = require("./parts/Comments")
 const { Stringify, stringify2 } = require("./writer/Stringify");
@@ -33,7 +33,7 @@ function fileReadFunction(filename, basedir) {
  * @param {string} basedir used for `@include`
  */
 function parseFile(filepath, basedir) {
-    const content = include(fileReadFunction(filepath, basedir), basedir, fileReadFunction)
+    const content = atInclude(fileReadFunction(filepath, basedir), basedir, fileReadFunction)
     return parseString(content)
 }
 
