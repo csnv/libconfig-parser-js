@@ -31,13 +31,13 @@ function _include(string, includedir, getFunction, nested_level) {
  * @param {string} string file contents
  * @param {(path:string, basedir:string)=>string} getFunction 
  */
-function include(string, includedir, getFunction) {
+function atInclude(string, includedir, getFunction) {
     return _include(string, includedir, getFunction, 0)
 }
 
 
 module.exports = {
-    include,
+    atInclude,
     getFromFile,
     setToFile
 }
